@@ -12,7 +12,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0" Background="#FFE9F9"></Grid>
@@ -45,7 +45,7 @@
             </ComboBox>
         </WrapPanel>
         
-        <ListView Name ="AgentListView" SelectionChanged="AgentListView_SelectionChanged" Grid.Row="1" d:ItemsSource="{d:SampleData ItemCount=5}">
+        <ListView Name ="AgentListView" SelectionChanged="AgentListView_SelectionChanged" Grid.Row="1">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Border BorderBrush="Black" BorderThickness="1">
@@ -93,6 +93,20 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+
+
+
+        <StackPanel Grid.Row="2" HorizontalAlignment="Right" Margin="10" Orientation="Horizontal">
+            <Button Name="LeftDirBtn" Click="LeftDirBtn_Click" Content="&lt;" Width="30" Height="30"></Button>
+            <ListBox Name="PageListBox" FontSize="20" MouseUp="PageListBox_MouseUp">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal"></WrapPanel>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+            </ListBox>
+            <Button Name="RightDirBtn" Click="RightDirBtn_Click" Content="&gt;" Width="30" Height="30"></Button>
+        </StackPanel>
         
     </Grid>
 </Page>

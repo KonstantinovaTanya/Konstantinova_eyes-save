@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -81,12 +83,89 @@ namespace Konstantinova_eyes_save
 
             if (ComboType.SelectedIndex > 0)
                 currentAgents = currentAgents.Where(p => p.AgentType.Title == selectedType).ToList();
-
-
+            
             AgentListView.ItemsSource = currentAgents;
+
+            TableList = currentAgents;
+
+            ChangePage(0, 0);
         }
 
+        /*private void ChangePage (int direction, int? selectedPage)
+        {
+            CurrentPageList.Clear();
+            CountRecords = TableList.Count;
 
+            if(CountRecords % 10 > 0)
+            {
+                CountPage = CountRecords / 10 + 1;
+            }
+            else
+            {
+                CountPage = CountRecords / 10;
+            }
+        }*/
+
+        int CountRecords;
+        int CountPage;
+        int CurrentPage = 0;
+        int PageSize = 10;
+
+        List<Agent> CurrentPageList = new List<Agent>();
+        List<Agent> TableList;
+
+        private void ChangePage(int direction, int? selectedPage)
+        {
+            CurrentPageList.Clear();
+            CountRecords = TableList.Count;
+            CountPage = (CountRecords + 9) / PageSize; 
+
+            if (selectedPage.HasValue) 
+            {
+                if (selectedPage >= 0 && selectedPage < CountPage)
+                    CurrentPage = selectedPage.Value;
+            }
+            else
+            {
+                int newPage = CurrentPage + (direction == 1 ? -1 : direction == 2 ? 1 : 0);
+                if (newPage >= 0 && newPage < CountPage)
+                    CurrentPage = newPage;
+            }
+
+            CurrentPageList.Clear();
+            int startIndex = CurrentPage * 10;
+            int endIndex = Math.Min(startIndex + 10, CountRecords);
+
+            for (int i = startIndex; i < endIndex; i++)
+            {
+                CurrentPageList.Add(TableList[i]);
+            }
+
+            PageListBox.Items.Clear();
+            for (int i = 1; i <= CountPage; i++)
+            {
+                PageListBox.Items.Add(i);
+            }
+            PageListBox.SelectedIndex = CurrentPage;
+
+            AgentListView.ItemsSource = CurrentPageList;
+            AgentListView.Items.Refresh();
+        }
+
+        private void PageListBox_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            ChangePage(0, Convert.ToInt32(PageListBox.SelectedItem.ToString()) - 1);
+        }
+
+        private void LeftDirBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ChangePage(1, null);
+        }
+
+        private void RightDirBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ChangePage(2, null);
+        }
         private void TBoxSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
             UpdateAgents();
@@ -106,5 +185,8 @@ namespace Konstantinova_eyes_save
         {
 
         }
+
+        
+
     }
 }
