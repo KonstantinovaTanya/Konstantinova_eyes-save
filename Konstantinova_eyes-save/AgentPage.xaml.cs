@@ -34,10 +34,7 @@ namespace Konstantinova_eyes_save
             UpdateAgents();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Manager.MainFrame.Navigate(new AddEditPage());
-        }
+        
 
         private void UpdateAgents()
         {
@@ -91,21 +88,6 @@ namespace Konstantinova_eyes_save
             ChangePage(0, 0);
         }
 
-        /*private void ChangePage (int direction, int? selectedPage)
-        {
-            CurrentPageList.Clear();
-            CountRecords = TableList.Count;
-
-            if(CountRecords % 10 > 0)
-            {
-                CountPage = CountRecords / 10 + 1;
-            }
-            else
-            {
-                CountPage = CountRecords / 10;
-            }
-        }*/
-
         int CountRecords;
         int CountPage;
         int CurrentPage = 0;
@@ -152,6 +134,17 @@ namespace Konstantinova_eyes_save
             AgentListView.Items.Refresh();
         }
 
+        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (Visibility == Visibility.Visible)
+            {
+                Konstantinova_eyesEntities.GetContext().ChangeTracker.Entries().ToList().ForEach(p => p.Reload());
+                AgentListView.ItemsSource = Konstantinova_eyesEntities.GetContext().Agent.ToList();
+                UpdateAgents();
+            }
+
+        }
+
         private void PageListBox_MouseUp(object sender, MouseButtonEventArgs e)
         {
             ChangePage(0, Convert.ToInt32(PageListBox.SelectedItem.ToString()) - 1);
@@ -181,12 +174,59 @@ namespace Konstantinova_eyes_save
             UpdateAgents();
         }
 
+        private void AddBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Manager.MainFrame.Navigate(new AddEditPage(null));
+        }
+
+        private void EditBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Manager.MainFrame.Navigate(new AddEditPage((sender as Button).DataContext as Agent));
+        }
+
         private void AgentListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (AgentListView.SelectedItems.Count > 0)
+            {
+                ChangePriorityBtn.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ChangePriorityBtn.Visibility = Visibility.Hidden;
+            }
 
+        }
+        private void ChangePriorityBtn_Click(object sender, RoutedEventArgs e)
+        {
+            int maxPriority = 0;
+            foreach (Agent selectedAgent in AgentListView.SelectedItems)
+            {
+                if (selectedAgent.Priority > maxPriority)
+                    maxPriority = selectedAgent.Priority;
+            }
+
+            PriorChange prior = new PriorChange(maxPriority);
+            prior.ShowDialog();
+
+            int newPriority = Convert.ToInt32(prior.TBPriority.Text);
+            foreach (Agent agent in AgentListView.SelectedItems)
+            {
+                agent.Priority = newPriority; 
+            }
+
+            try
+            {
+                Konstantinova_eyesEntities.GetContext().SaveChanges();
+                MessageBox.Show("Информация сохранена");
+                AgentListView.SelectedItems.Clear();
+                UpdateAgents();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         
-
     }
 }

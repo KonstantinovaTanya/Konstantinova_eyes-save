@@ -6,8 +6,8 @@
       xmlns:local="clr-namespace:Konstantinova_eyes_save"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="AgentPage" FontFamily="Century Gothic">
-
+      Title="AgentPage" FontFamily="Century Gothic" IsVisibleChanged="Page_IsVisibleChanged">
+        
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -17,6 +17,8 @@
 
         <Grid Grid.Row="0" Background="#FFE9F9"></Grid>
         <Grid Grid.Row="2" Background="#FFE9F9"></Grid>
+
+        
         
         <WrapPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
             <StackPanel Orientation="Vertical" Margin="10">
@@ -43,9 +45,12 @@
                 <TextBlock>ОАО</TextBlock>
                 <TextBlock>ПАО</TextBlock>
             </ComboBox>
+
+            <Button Content="Добавить агента" Name="AddBtn" Click="AddBtn_Click" VerticalAlignment="Bottom" Margin="10"></Button>
+            <Button Name="ChangePriorityBtn" Content="Изменить приоритет" Click="ChangePriorityBtn_Click" Width="250" Visibility="Collapsed" VerticalAlignment="Bottom" Margin="10"/>
         </WrapPanel>
-        
-        <ListView Name ="AgentListView" SelectionChanged="AgentListView_SelectionChanged" Grid.Row="1">
+
+        <ListView Name ="AgentListView" SelectionChanged="AgentListView_SelectionChanged" Grid.Row="1" d:ItemsSource="{d:SampleData ItemCount=5}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Border BorderBrush="Black" BorderThickness="1">
@@ -60,9 +65,10 @@
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
 
-                            <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="4" Stretch="Uniform" Height="100" Margin="10">
+                            <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="5" Stretch="Uniform" Height="150" Margin="10">
                                 <Image.Source>
                                     <Binding Path="Logo">
                                         <Binding.TargetNullValue>
@@ -73,7 +79,7 @@
                                     </Binding>
                                 </Image.Source>
                             </Image>
-                            
+
                             <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
                                 <TextBlock Text="{Binding AgentTypeName}" FontSize="20"></TextBlock>
                                 <TextBlock Text="{Binding Title, StringFormat= | {0}}" FontSize="20"></TextBlock>
@@ -88,13 +94,15 @@
                             <StackPanel Grid.RowSpan="4" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <TextBlock Text="{Binding Discount, StringFormat= скидка {0} %}" FontSize="20"></TextBlock>
                             </StackPanel>
+
+                            <Button Content="Редактировать" Name="EditBtn" Click="EditBtn_Click" Grid.Column="2" Grid.Row="4" HorizontalAlignment="Right"></Button>
                         </Grid>
                     </Border>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-
-
+        
+        
 
         <StackPanel Grid.Row="2" HorizontalAlignment="Right" Margin="10" Orientation="Horizontal">
             <Button Name="LeftDirBtn" Click="LeftDirBtn_Click" Content="&lt;" Width="30" Height="30"></Button>

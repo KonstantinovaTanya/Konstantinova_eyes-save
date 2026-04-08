@@ -33,6 +33,19 @@ namespace Konstantinova_eyes_save
         public string Email { get; set; }
         public string Phone { get; set; }
         public string Logo { get; set; }
+        public string LogoPathFormat
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(Logo))
+                    return null;
+
+                string projectPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\.."));
+                string fullPath = System.IO.Path.Combine(projectPath, Logo);
+
+                return System.IO.File.Exists(fullPath) ? fullPath : null;
+            }
+        }
         public string Address { get; set; }
         public int Priority { get; set; }
         public string DirectorName { get; set; }
